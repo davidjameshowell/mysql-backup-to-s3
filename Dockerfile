@@ -1,8 +1,9 @@
 FROM debian:jessie
-MAINTAINER Tutum Labs <support@tutum.co>
+MAINTAINER Yohann LOEFFLER <loeffler.yohann@gmail.com>
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends mysql-client && \
+    apt-get install -y --no-install-recommends cron mysql-client && \
+    apt-get install -y cron && \
     mkdir /backup
 
 ENV CRON_TIME="0 0 * * *" \
