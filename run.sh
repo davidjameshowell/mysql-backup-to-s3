@@ -17,6 +17,7 @@ MYSQL_DB=${MYSQL_DB}
 [ -z "${MYSQL_USER}" ] && { echo "=> MYSQL_USER cannot be empty" && exit 1; }
 [ -z "${MYSQL_PASS}" ] && { echo "=> MYSQL_PASS cannot be empty" && exit 1; }
 
+BACKUP_CMD="mysqldump -h\${MYSQL_HOST} -P\${MYSQL_PORT} -u\${MYSQL_USER} -p\${MYSQL_PASS} \${EXTRA_OPTS} \${MYSQL_DB} > /backup/"'${BACKUP_NAME}'
 
 echo "=> Creating backup script"
 rm -f /backup.sh
@@ -25,9 +26,8 @@ cat <<EOF >> /backup.sh
 MAX_BACKUPS=3
 
 BACKUP_NAME=\$(date +\%Y\%m\%d-\%H\%M\%S).sql
-BACKUP_CMD="mysqldump -h\${MYSQL_HOST} -P\${MYSQL_PORT} -u\${MYSQL_USER} -p\${MYSQL_PASS} \${EXTRA_OPTS} \${MYSQL_DB} > /backup/"\${BACKUP_NAME}
 
-if [ \${MYSQL_DB} != "--all-databases" ] ;then
+if [ \${MYSQL_DB} != "--all-databases" ]; then
     BACKUP_NAME=\${MYSQL_DB}-\$(date +\%Y\%m\%d-\%H\%M\%S).sql
     BACKUP_CMD="mysqldump -h\${MYSQL_HOST} -P\${MYSQL_PORT} -u\${MYSQL_USER} -p\${MYSQL_PASS} \${EXTRA_OPTS} -B\${MYSQL_DB} > /backup/"\${BACKUP_NAME}
 fi 
