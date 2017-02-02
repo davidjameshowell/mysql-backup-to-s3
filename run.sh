@@ -10,24 +10,32 @@ MYSQL_PORT=${MYSQL_PORT_3306_TCP_PORT:-${MYSQL_PORT}}
 MYSQL_PORT=${MYSQL_PORT_1_3306_TCP_PORT:-${MYSQL_PORT}}
 MYSQL_USER=${MYSQL_USER:-${MYSQL_ENV_MYSQL_USER}}
 MYSQL_PASS=${MYSQL_PASS:-${MYSQL_ENV_MYSQL_PASS}}
+MYSQL_DB=${MYSQL_DB}
 
 [ -z "${MYSQL_HOST}" ] && { echo "=> MYSQL_HOST cannot be empty" && exit 1; }
 [ -z "${MYSQL_PORT}" ] && { echo "=> MYSQL_PORT cannot be empty" && exit 1; }
 [ -z "${MYSQL_USER}" ] && { echo "=> MYSQL_USER cannot be empty" && exit 1; }
 [ -z "${MYSQL_PASS}" ] && { echo "=> MYSQL_PASS cannot be empty" && exit 1; }
 
-BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} ${MYSQL_DB} > /backup/"'${BACKUP_NAME}'
 
 echo "=> Creating backup script"
 rm -f /backup.sh
 cat <<EOF >> /backup.sh
 #!/bin/bash
-MAX_BACKUPS=${MAX_BACKUPS}
+MAX_BACKUPS=3
 
-BACKUP_NAME=\$(date +\%Y.\%m.\%d.\%H\%M\%S).sql
+BACKUP_NAME=\$(date +\%Y\%m\%d-\%H\%M\%S).sql
+BACKUP_CMD="mysqldump -h\${MYSQL_HOST} -P\${MYSQL_PORT} -u\${MYSQL_USER} -p\${MYSQL_PASS} \${EXTRA_OPTS} --all-databases > /backup/"\${BACKUP_NAME}
+
+if [ \${MYSQL_DB} != "--all-databases" ] ;then
+    BACKUP_NAME=\${MYSQL_DB}-\$(date +\%Y\%m\%d-\%H\%M\%S).sql
+    BACKUP_CMD="mysqldump -h\${MYSQL_HOST} -P\${MYSQL_PORT} -u\${MYSQL_USER} -p\${MYSQL_PASS} \${EXTRA_OPTS} -B\${MYSQL_DB} > /backup/"\${BACKUP_NAME}
+fi 
+
 
 echo "=> Backup started: \${BACKUP_NAME}"
-if ${BACKUP_CMD} ;then
+if \${BACKUP_CMD} ;then
+    echo \${BACKUP_CMD}
     echo "   Backup succeeded"
 else
     echo "   Backup failed"
@@ -51,10 +59,16 @@ rm -f /restore.sh
 cat <<EOF >> /restore.sh
 #!/bin/bash
 echo "=> Restore database from \$1"
-if mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} < \$1 ;then
-    echo "   Restore succeeded"
+if [ -z \$2 ] ; then
+    if mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} < \$1 ;then
+       echo "   Restore succeeded"
+    else
+       echo "   Restore failed"
 else
-    echo "   Restore failed"
+    if mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} \$1 < \$2 ;then
+       echo "   Restore succeeded"
+    else
+       echo "   Restore failed"
 fi
 echo "=> Done"
 EOF
@@ -77,6 +91,6 @@ elif [ -n "${INIT_RESTORE_LATEST}" ]; then
 fi
 
 echo "${CRON_TIME} /backup.sh >> /mysql_backup.log 2>&1" > /crontab.conf
-crontab  /crontab.conf
+crontab /crontab.conf
 echo "=> Running cron job"
 exec cron -f
