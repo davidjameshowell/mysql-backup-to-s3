@@ -27,7 +27,7 @@ MAX_BACKUPS=3
 
 BACKUP_NAME=\$(date +\%Y\%m\%d-\%H\%M\%S).sql
 
-if [ \${MYSQL_DB} != "--all-databases" ]; then
+if [ "\${MYSQL_DB}" != "--all-databases" ]; then
     BACKUP_NAME=\${MYSQL_DB}-\$(date +\%Y\%m\%d-\%H\%M\%S).sql
     BACKUP_CMD="mysqldump -h\${MYSQL_HOST} -P\${MYSQL_PORT} -u\${MYSQL_USER} -p\${MYSQL_PASS} \${EXTRA_OPTS} -B \${MYSQL_DB} > /backup/"\${BACKUP_NAME}
 fi 
