@@ -4,6 +4,7 @@ MAINTAINER Yohann LOEFFLER <loeffler.yohann@gmail.com>
 RUN apt-get update && \
     apt-get install -y --no-install-recommends cron mysql-client && \
     apt-get install -y cron && \
+    sed -i '/pam_loginuid.so/d' /etc/pam.d/cron && \
     mkdir /backup
 
 ENV CRON_TIME="0 0 * * *" \
