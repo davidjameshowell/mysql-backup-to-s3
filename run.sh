@@ -34,8 +34,7 @@ BACKUP_NAME=\$(date +\%Y\%m\%d-\%H\%M\%S).sql
 
 
 echo "=> Backup started: \${BACKUP_NAME}"
-if \${BACKUP_CMD} ;then
-    echo \${BACKUP_CMD}
+if ${BACKUP_CMD} ;then
     echo "   Backup succeeded"
 else
     echo "   Backup failed"
