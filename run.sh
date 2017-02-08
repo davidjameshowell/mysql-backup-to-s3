@@ -28,8 +28,8 @@ MAX_BACKUPS=3
 if [ "${MYSQL_DB}" != "--all-databases" ]; then
 	for db in ${MYSQL_DB}
 	do
-		BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} -B \${db} > /backup/"'${BACKUP_NAME}'
-		BACKUP_NAME=${db}-\$(date +\%Y\%m\%d-\%H\%M\%S).sql
+		BACKUP_NAME=\${db}-\$(date +\%Y\%m\%d-\%H\%M\%S).sql
+		BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} -B \\${db} > /backup/"'${BACKUP_NAME}'
 
 		echo "=> Backup started: \${BACKUP_NAME}"
 		if ${BACKUP_CMD} ;then
@@ -40,8 +40,9 @@ if [ "${MYSQL_DB}" != "--all-databases" ]; then
 		fi
 	done
 else
-	BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} ${MYSQL_DB} > /backup/"'${BACKUP_NAME}'
+	MYSQL_DB="--all-databases"
 	BACKUP_NAME=\$(date +\%Y\%m\%d-\%H\%M\%S).sql
+	BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} ${MYSQL_DB} > /backup/"'${BACKUP_NAME}'
 
 	echo "=> Backup started: \${BACKUP_NAME}"
 	if ${BACKUP_CMD} ;then
@@ -59,7 +60,7 @@ if [ -n "\${MAX_BACKUPS}" ]; then
         echo "   Backup \${BACKUP_TO_BE_DELETED} is deleted"
         rm -rf /backup/\${BACKUP_TO_BE_DELETED}
     done
-fi
+fi	
 echo "=> Backup done"
 EOF
 chmod +x /backup.sh
