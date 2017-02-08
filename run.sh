@@ -32,7 +32,7 @@ if [ "${MYSQL_DB}" != "--all-databases" ]; then
 		BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} -B \${db} > /backup/"\${BACKUP_NAME}
 
 		echo "=> Backup started: \${BACKUP_NAME}"
-		if ${BACKUP_CMD} ;then
+		if \${BACKUP_CMD} ;then
 		    echo "   Backup succeeded"
 		else
     		echo "   Backup failed"
@@ -45,7 +45,7 @@ else
 	BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} \${MYSQL_DB} > /backup/"\${BACKUP_NAME}
 
 	echo "=> Backup started: \${BACKUP_NAME}"
-	if ${BACKUP_CMD} ;then
+	if \${BACKUP_CMD} ;then
 	    echo "   Backup succeeded"
 	else
     	echo "   Backup failed"
