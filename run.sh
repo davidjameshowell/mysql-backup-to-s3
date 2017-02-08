@@ -29,10 +29,10 @@ if [ "${MYSQL_DB}" != "--all-databases" ]; then
 	for db in ${MYSQL_DB}
 	do
 		BACKUP_NAME=\${db}-\$(date +\%Y\%m\%d-\%H\%M\%S).sql
-		BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} '\${db}' > /backup/"'\${BACKUP_NAME}'
+		BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} \${db}"
 
 		echo "=> Backup started: \${BACKUP_NAME}"
-		if \${BACKUP_CMD} ;then
+		if \${BACKUP_CMD} > /backup/'\${BACKUP_NAME}' ;then
 		    echo "   Backup succeeded"
 		else
     		echo "   Backup failed"
