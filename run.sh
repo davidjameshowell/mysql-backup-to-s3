@@ -17,7 +17,7 @@ MYSQL_DB=${MYSQL_DB}
 [ -z "${MYSQL_USER}" ] && { echo "=> MYSQL_USER cannot be empty" && exit 1; }
 [ -z "${MYSQL_PASS}" ] && { echo "=> MYSQL_PASS cannot be empty" && exit 1; }
 
-BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} ${MYSQL_DB} > /backup/"'${BACKUP_NAME}'
+#BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} ${MYSQL_DB} > /backup/"'${BACKUP_NAME}'
 
 echo "=> Creating backup script"
 rm -f /backup.sh
@@ -29,7 +29,7 @@ if [ "${MYSQL_DB}" != "--all-databases" ]; then
 	for db in ${MYSQL_DB}
 	do
 		BACKUP_NAME=\${db}-\$(date +\%Y\%m\%d-\%H\%M\%S).sql
-		BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} -B \\${db} > /backup/"'${BACKUP_NAME}'
+		BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} -B \${db} > /backup/"'${BACKUP_NAME}'
 
 		echo "=> Backup started: \${BACKUP_NAME}"
 		if ${BACKUP_CMD} ;then
@@ -42,7 +42,7 @@ if [ "${MYSQL_DB}" != "--all-databases" ]; then
 else
 	MYSQL_DB="--all-databases"
 	BACKUP_NAME=\$(date +\%Y\%m\%d-\%H\%M\%S).sql
-	BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} ${MYSQL_DB} > /backup/"'${BACKUP_NAME}'
+	BACKUP_CMD="mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} \${MYSQL_DB} > /backup/"'${BACKUP_NAME}'
 
 	echo "=> Backup started: \${BACKUP_NAME}"
 	if ${BACKUP_CMD} ;then
