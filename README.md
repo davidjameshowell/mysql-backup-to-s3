@@ -38,6 +38,9 @@ See the list of backups, you can run:
 
 To restore database from a certain backup, simply run:
 Restoring a specific database :
+
     docker exec mysql-backup /restore.sh [db_to_restore] [backupfile]
+    
 Full restore :
+
     docker exec mysql-backup /restore.sh [backupfile]
