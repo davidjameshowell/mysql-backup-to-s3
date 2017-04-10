@@ -10,12 +10,12 @@ This image runs mysqldump to backup data using cronjob to folder `/backup`
         --env MYSQL_USER=admin \
         --env MYSQL_PASS=password \
         --volume host.folder:/backup
-        tutum/mysql-backup
+        yloeffler/mysql-backup
 
-Moreover, if you link `tutum/mysql-backup` to a mysql container(e.g. `tutum/mysql`) with an alias named mysql, this image will try to auto load the `host`, `port`, `user`, `pass` if possible.
+Moreover, if you link `yloeffler/mysql-backup` to a mysql container(e.g. `tutum/mysql`) with an alias named mysql, this image will try to auto load the `host`, `port`, `user`, `pass` if possible.
 
     docker run -d -p 27017:27017 -p 28017:28017 -e MYSQL_PASS="mypass" --name mysql tutum/mysql
-    docker run -d --link mysql:mysql -v host.folder:/backup tutum/mysql-backup
+    docker run -d --link mysql:mysql -v host.folder:/backup yloeffler/mysql-backup
 
 ## Parameters
 
@@ -34,9 +34,10 @@ Moreover, if you link `tutum/mysql-backup` to a mysql container(e.g. `tutum/mysq
 
 See the list of backups, you can run:
 
-    docker exec tutum-backup ls /backup
+    docker exec mysql-backup ls /backup
 
 To restore database from a certain backup, simply run:
-
-    docker exec tutum-backup /restore.sh database /backup/database_2015.08.06.171901
-    docker exec tutum-backup /restore.sh /backup/2015.08.06.171901
+Restoring a specific database :
+    docker exec mysql-backup /restore.sh [db_to_restore] [backupfile]
+Full restore :
+    docker exec mysql-backup /restore.sh [backupfile]
