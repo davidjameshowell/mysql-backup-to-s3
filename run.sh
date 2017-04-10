@@ -69,17 +69,21 @@ echo "=> Creating restore script"
 rm -f /restore.sh
 cat <<EOF >> /restore.sh
 #!/bin/bash
-echo "=> Restore database from \$1"
-if [ -z \$2 ] ; then
-    if mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} < \$1 ;then
+
+if [ -z \$2 ]; then
+	echo "=> Restore database from \$1"
+    if mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} < \$1 ;then	
        echo "   Restore succeeded"
     else
        echo "   Restore failed"
+    fi
 else
+	echo "=> Restore database \$1 from \$2 "
     if mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} \$1 < \$2 ;then
        echo "   Restore succeeded"
     else
        echo "   Restore failed"
+    fi
 fi
 echo "=> Done"
 EOF
