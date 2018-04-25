@@ -23,7 +23,7 @@ echo "=> Creating backup script"
 rm -f /backup.sh
 cat <<EOF >> /backup.sh
 #!/bin/bash
-MAX_BACKUPS=3
+MAX_BACKUPS=${MAX_BACKUPS}
 
 if [ "${MYSQL_DB}" != "--all-databases" ]; then
 	for db in ${MYSQL_DB}
@@ -60,7 +60,7 @@ if [ -n "\${MAX_BACKUPS}" ]; then
         echo "   Backup \${BACKUP_TO_BE_DELETED} is deleted"
         rm -rf /backup/\${BACKUP_TO_BE_DELETED}
     done
-fi	
+fi
 echo "=> Backup done"
 EOF
 chmod +x /backup.sh
@@ -72,7 +72,7 @@ cat <<EOF >> /restore.sh
 
 if [ -z \$2 ]; then
 	echo "=> Restore database from \$1"
-    if mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} < \$1 ;then	
+    if mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} < \$1 ;then
        echo "   Restore succeeded"
     else
        echo "   Restore failed"
