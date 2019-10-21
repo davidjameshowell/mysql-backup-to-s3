@@ -1,0 +1,25 @@
+kind: pipeline
+name: docker-build-publish
+
+clone:
+  disable: true
+
+steps:
+  - name: clone
+    image: docker:git
+    commands:
+      - git clone $DRONE_GIT_HTTP_URL /drone/src
+
+  - name: docker-build
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: REGISTRY_USERNAME
+      password:
+        from_secret: REGISTRY_PASSWORD
+      repo: registry.djh-projects.com/backup-mysql-to-s3
+      registry: registry.djh-projects.com
+      tags: 
+        - ${DRONE_BRANCH}-${DRONE_BUILD_NUMBER}
+        - ${DRONE_BRANCH}-latest
+      storage_driver: overlay
