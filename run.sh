@@ -9,6 +9,7 @@
 [ -z "${S3_REGION}" ] && { echo "=> S3_REGION cannot be empty" && exit 1; }
 [ -z "${AWS_ACCESS_KEY_ID}" ] && { echo "=> AWS_ACCESS_KEY_ID cannot be empty" && exit 1; }
 [ -z "${AWS_SECRET_ACCESS_KEY}" ] && { echo "=> AWS_SECRET_ACCESS_KEY cannot be empty" && exit 1; }
+[ -z "${HEALTHCHECK_IO_GUID}" ] && { echo "=> AWS_SECRET_ACCESS_KEY cannot be empty" && exit 1; }
 
 echo "=> Creating backup script"
 rm -f /backup.sh
@@ -24,9 +25,11 @@ if \${BACKUP_CMD} > \${BACKUP_NAME} ;then
     gzip -9 \${BACKUP_NAME}
     /usr/local/bin/aws s3 --region \${S3_REGION} cp \${BACKUP_NAME}.gz s3://\${S3_BUCKET}/\${S3_PREFIX}/\${BACKUP_NAME}.gz
     rm -rf \${BACKUP_NAME}.gz
+    curl --retry 3 https://hc-ping.com/"${HEALTHCHECK_IO_GUID}"
     echo "   Backup succeeded"
 else
     echo "   Backup failed"
+    curl --retry 3 https://hc-ping.com/"${HEALTHCHECK_IO_GUID}"/fail
     rm -rf \${BACKUP_NAME}
 fi
 echo "=> Backup done"
