@@ -9,7 +9,7 @@
 [ -z "${S3_REGION}" ] && { echo "=> S3_REGION cannot be empty" && exit 1; }
 [ -z "${AWS_ACCESS_KEY_ID}" ] && { echo "=> AWS_ACCESS_KEY_ID cannot be empty" && exit 1; }
 [ -z "${AWS_SECRET_ACCESS_KEY}" ] && { echo "=> AWS_SECRET_ACCESS_KEY cannot be empty" && exit 1; }
-[ -z "${HEALTHCHECK_IO_GUID}" ] && { echo "=> AWS_SECRET_ACCESS_KEY cannot be empty" && exit 1; }
+[ -z "${HEALTHCHECK_IO_GUID}" ] && { echo "=> HEALTHCHECK_IO_GUID cannot be empty" && exit 1; }
 
 echo "=> Creating backup script"
 rm -f /backup.sh
