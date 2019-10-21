@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends cron mysql-client python3-pip python3-setuptools python3-wheel && \
+    apt-get install -y --no-install-recommends cron curl mysql-client python3-pip python3-setuptools python3-wheel && \
     pip3 install awscli && \
     mkdir /backup
 
