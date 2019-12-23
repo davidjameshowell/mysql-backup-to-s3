@@ -22,6 +22,11 @@ cd /backup
 
 echo "=> Backup started: \${BACKUP_NAME}"
 if \${BACKUP_CMD} > \${BACKUP_NAME} ;then
+    if [ "${RESTORE_BACKUP_TO_LIVE_MYSQL_SERVER}" -eq "true" ]
+        # Import into Bitwarden Isolated Slave
+        mysql --binary-mode=1 -h\${MYSQL_RESTORE_HOST} -P\${MYSQL_RESTORE_PORT} -u\${MYSQL_RESTORE_USER} -p\${MYSQL_RESTORE_PASS} \${MYSQL_RESTORE_DB} < \${BACKUP_NAME}
+        echo 'Successfully imported into Live Host on \${MYSQL_RESTORE_HOST}'
+    fi
     gzip -9 \${BACKUP_NAME}
     /usr/local/bin/aws s3 --region \${S3_REGION} cp \${BACKUP_NAME}.gz s3://\${S3_BUCKET}/\${S3_PREFIX}/\${BACKUP_NAME}.gz
     rm -rf \${BACKUP_NAME}.gz
@@ -40,3 +45,4 @@ echo "${CRON_TIME} /bin/bash /backup.sh >> /proc/1/fd/1 2>/proc/1/fd/2" > /cront
 crontab /crontab.conf
 echo "=> Running cron job"
 exec cron -f
+
