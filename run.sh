@@ -22,7 +22,7 @@ cd /backup
 
 echo "=> Backup started: \${BACKUP_NAME}"
 if \${BACKUP_CMD} > \${BACKUP_NAME} ;then
-    if [ "${RESTORE_BACKUP_TO_LIVE_MYSQL_SERVER}" -eq "true" ]
+    if [ "\${RESTORE_BACKUP_TO_LIVE_MYSQL_SERVER}" -eq "true" ];then
         # Import into Bitwarden Isolated Slave
         mysql --binary-mode=1 -h\${MYSQL_RESTORE_HOST} -P\${MYSQL_RESTORE_PORT} -u\${MYSQL_RESTORE_USER} -p\${MYSQL_RESTORE_PASS} \${MYSQL_RESTORE_DB} < \${BACKUP_NAME}
         echo 'Successfully imported into Live Host on \${MYSQL_RESTORE_HOST}'
