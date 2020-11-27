@@ -7,6 +7,7 @@
 [ -z "${S3_BUCKET}" ] && { echo "=> S3_BUCKET cannot be empty" && exit 1; }
 [ -z "${S3_PREFIX}" ] && { echo "=> S3_PREFIX cannot be empty" && exit 1; }
 [ -z "${S3_REGION}" ] && { echo "=> S3_REGION cannot be empty" && exit 1; }
+[ -z "${SED_CHANGE_DATABASE_NAME}" ] && { echo "=> SED_CHANGE_DATABASE_NAME cannot be empty" && exit 1; }
 [ -z "${AWS_ACCESS_KEY_ID}" ] && { echo "=> AWS_ACCESS_KEY_ID cannot be empty" && exit 1; }
 [ -z "${AWS_SECRET_ACCESS_KEY}" ] && { echo "=> AWS_SECRET_ACCESS_KEY cannot be empty" && exit 1; }
 [ -z "${HEALTHCHECK_IO_GUID}" ] && { echo "=> HEALTHCHECK_IO_GUID cannot be empty" && exit 1; }
@@ -23,6 +24,9 @@ cd /backup
 echo "=> Backup started: \${BACKUP_NAME}"
 if \${BACKUP_CMD} > \${BACKUP_NAME} ;then
     if [ "\${RESTORE_BACKUP_TO_LIVE_MYSQL_SERVER}" = "true" ];then
+        if [ "\${SED_CHANGE_DATABASE_NAME}" = "true" ]; then
+            sed -i 's/`bitwarden`/`'${MYSQL_RESTORE_DB}'`/g' ${BACKUP_NAME}
+        fi
         # Import into Bitwarden Isolated Slave
         mysql --binary-mode=1 -h\${MYSQL_RESTORE_HOST} -P\${MYSQL_RESTORE_PORT} -u\${MYSQL_RESTORE_USER} -p\${MYSQL_RESTORE_PASS} \${MYSQL_RESTORE_DB} < \${BACKUP_NAME}
         echo "Successfully imported into Live Host on \${MYSQL_RESTORE_HOST}"
